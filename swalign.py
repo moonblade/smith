@@ -1,8 +1,8 @@
 #!/bin/python2
 import swalign
-sw = swalign.LocalAlignment(
-    swalign.NucleotideScoringMatrix(match, mismatch),
-    gap_penalty, gap_extension_penalty, gap_extension_decay)
-
-aln = sw.align(r_seq, q_seq, ref_name, query_name)
-aln.dump()
+match = 2
+mismatch = -1
+scoring = swalign.NucleotideScoringMatrix(match, mismatch)
+sw = swalign.LocalAlignment(scoring)  # you can also choose gap penalties, etc...
+alignment = sw.align('ACACACTA','AGCACACA')
+alignment.dump()
