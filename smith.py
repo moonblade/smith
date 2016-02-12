@@ -81,6 +81,7 @@ def calc_score(matrix, x, y):
     '''Calculate score for a given x, y position in the scoring matrix.
 
     The score is based on the up, left, and upper-left neighbors.
+    Here the score is hardcoded, it will be made into an array shortly
     '''
     similarity = 0
     if ((seq1[x - 1]=='A' and seq2[y - 1]=='U')or(seq1[x - 1]=='U' and seq2[y - 1]=='A')):
@@ -164,10 +165,6 @@ def alignment_string(aligned_seq1, aligned_seq2):
     identities (|), gaps (-), and mismatches (:). As the string is constructed,
     it also counts number of identities, gaps, and mismatches and returns the
     counts along with the alignment string.
-
-    AAGGATGCCTCAAATCGATCT-TTTTCTTGG-
-    ::||::::::||:|::::::: |:  :||:|   <-- alignment string
-    CTGGTACTTGCAGAGAAGGGGGTA--ATTTGG
     '''
     # Build the string as a list of characters to avoid costly string
     # concatenation.
