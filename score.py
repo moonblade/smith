@@ -1,42 +1,41 @@
 #Module for score related stuff
 import globalVariables
-def createRawScoreMatrix():
+def initScoreMatrix(seq1, seq2):
     globalVariables.rawScoreMatrix = {'A':{'A':-3,'C':-3,'G':-3,'U':5},'C':{'A':-3,'C':-3,'G':5,'U':-3},'G':{'A':-3,'C':5,'G':-3,'U':2},'U':{'A':5,'C':-3,'G':2,'U':-3}}
 
-def create_score_matrix(seq1, seq2):
     rows = len(globalVariables.seq1) + 1
     cols = len(globalVariables.seq2) + 1
 
-    score_matrix = [[0 for col in range(cols)] for row in range(rows)]
+    scoreMatrix = [[0 for col in range(cols)] for row in range(rows)]
 
     # Fill the scoring matrix.
-    max_score = 0
-    max_pos   = None    # The row and columbn of the highest score in matrix.
+    maxScore = 0
+    maxPos   = None    # The row and columbn of the highest score in matrix.
     for i in range(1, rows):
         for j in range(1, cols):
-            score = calc_score(score_matrix, i, j)
-            if score > max_score:
-                max_score = score
-                max_pos   = (i, j)
+            score = calculateScore(scoreMatrix, i, j)
+            if score > maxScore:
+                maxScore = score
+                maxPos   = (i, j)
 
-            score_matrix[i][j] = score
+            scoreMatrix[i][j] = score
 
-    assert max_pos is not None, 'the x, y position with the highest score was not found'
+    assert maxPos is not None, 'the x, y position with the highest score was not found'
 
-    return score_matrix, max_pos
+    return scoreMatrix, maxPos
 
-def calc_score(matrix, x, y):
+def calculateScore(matrix, x, y):
     '''Calculate score for a given x, y position in the scoring matrix.
 
     The score is based on the up, left, and upper-left neighbors.
     '''
-    diag_score = matrix[x - 1][y - 1] + globalVariables.rawScoreMatrix[globalVariables.seq1[x-1]][globalVariables.seq2[y-1]]
-    up_score   = matrix[x - 1][y] + globalVariables.gap
-    left_score = matrix[x][y - 1] + globalVariables.gap
+    diagonalScore = matrix[x - 1][y - 1] + globalVariables.rawScoreMatrix[globalVariables.seq1[x-1]][globalVariables.seq2[y-1]]
+    upScore   = matrix[x - 1][y] + globalVariables.gap
+    leftScore = matrix[x][y - 1] + globalVariables.gap
 
-    return max(0, diag_score, up_score, left_score)
+    return max(0, diagonalScore, upScore, leftScore)
 
-def traceback(score_matrix, start_pos):
+def traceback(scoreMatrix, startPosition):
     '''Find the optimal path through the matrix.
 
     This function traces a path from the bottom-right to the top-left corner of
@@ -52,37 +51,37 @@ def traceback(score_matrix, start_pos):
     '''
 
     END, DIAG, UP, LEFT = range(4)
-    aligned_seq1 = []
-    aligned_seq2 = []
-    x, y         = start_pos
-    move         = next_move(score_matrix, x, y)
+    alignedSequenceOne = []
+    alignedSequenceTwo = []
+    x, y         = startPosition
+    move         = nextMove(scoreMatrix, x, y)
     while move != END:
         if move == DIAG:
-            aligned_seq1.append(globalVariables.seq1[x - 1])
-            aligned_seq2.append(globalVariables.seq2[y - 1])
+            alignedSequenceOne.append(globalVariables.seq1[x - 1])
+            alignedSequenceTwo.append(globalVariables.seq2[y - 1])
             x -= 1
             y -= 1
         elif move == UP:
-            aligned_seq1.append(globalVariables.seq1[x - 1])
-            aligned_seq2.append('-')
+            alignedSequenceOne.append(globalVariables.seq1[x - 1])
+            alignedSequenceTwo.append('-')
             x -= 1
         else:
-            aligned_seq1.append('-')
-            aligned_seq2.append(globalVariables.seq2[y - 1])
+            alignedSequenceOne.append('-')
+            alignedSequenceTwo.append(globalVariables.seq2[y - 1])
             y -= 1
 
-        move = next_move(score_matrix, x, y)
+        move = nextMove(scoreMatrix, x, y)
 
-    aligned_seq1.append(globalVariables.seq1[x - 1])
-    aligned_seq2.append(globalVariables.seq1[y - 1])
+    alignedSequenceOne.append(globalVariables.seq1[x - 1])
+    alignedSequenceTwo.append(globalVariables.seq1[y - 1])
 
-    return ''.join(reversed(aligned_seq1)), ''.join(reversed(aligned_seq2))
+    return ''.join(reversed(alignedSequenceOne)), ''.join(reversed(alignedSequenceTwo))
 
 
-def next_move(score_matrix, x, y):
-    diag = score_matrix[x - 1][y - 1]
-    up   = score_matrix[x - 1][y]
-    left = score_matrix[x][y - 1]
+def nextMove(scoreMatrix, x, y):
+    diag = scoreMatrix[x - 1][y - 1]
+    up   = scoreMatrix[x - 1][y]
+    left = scoreMatrix[x][y - 1]
     if diag >= up and diag >= left:     # Tie goes to the DIAG move.
         return 1 if diag != 0 else 0    # 1 signals a DIAG move. 0 signals the end.
     elif up > diag and up >= left:      # Tie goes to UP move.

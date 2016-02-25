@@ -1,6 +1,10 @@
 #states module
 import globalVariables
-def makeStates():
+# States is a json/ dictionay which contains the states possible in the arrangement
+# The emission and transmission probability will be stored in state as well
+def initStates():
+    # Creates the initial configurations of states
+    # Loads all emissions into it
     states={}
     states['in']={'emissions':{}}
     states['mismatch']={'emissions':{}}
@@ -22,5 +26,12 @@ def makeStates():
 
     globalVariables.states = states
 
-def getState(states,x,y):
+def getState(x,y):
+    # Given an emission x,y finds which state it belongs to
+    for i in globalVariables.states:
+        if(x+y in globalVariables.states[i]['emissions'] or y+x in globalVariables.states[i]['emissions']):
+            return i
+    return "error"
+
+def initTransitionProbability():
     pass

@@ -10,19 +10,17 @@ import globalVariables
 def main():
 
     # Initialize the scoring matrix.
-    score.createRawScoreMatrix()
-    score_matrix, start_pos = score.create_score_matrix(globalVariables.seq1,globalVariables.seq2)
-    seq1_aligned, seq2_aligned = score.traceback(score_matrix, start_pos)
+    scoreMatrix, startPos = score.initScoreMatrix(globalVariables.seq1,globalVariables.seq2)
+    oneAligned, twoAligned = score.traceback(scoreMatrix, startPos)
 
-    assert len(seq1_aligned) == len(seq2_aligned), 'aligned strings are not the same size'
-    print(seq1_aligned)
-    print(seq2_aligned)
+    assert len(oneAligned) == len(twoAligned), 'aligned strings are not the same size'
+    print(oneAligned)
+    print(twoAligned)
 
 
-    state.makeStates()
-    print(globalVariables.states)
-
-def print_matrix(matrix):
+    state.initStates()
+    # print(globalVariables.states)
+def printMatrix(matrix):
     '''Print the scoring matrix.
 
     ex:
