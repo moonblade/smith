@@ -17,6 +17,9 @@ gap      = -1
 seq1 = "GGCAU"
 seq2 = "UCGGA"
 
+reverseStartIndex=1
+reverseEndIndex=7
+states = {}
 
 def main():
     # The scoring matrix contains an extra row and column for the gap (-), hence
@@ -49,8 +52,8 @@ def main():
         print('Sbjct  {0:<4}  {1}  {2:<4}'.format(i + 1, seq2_slice, i + len(seq2_slice)))
         print()
 
-    print(seq1_aligned)
-    print(seq2_aligned)
+    makeStates()
+
 
 
 def create_score_matrix(rows, cols):
@@ -79,23 +82,21 @@ def create_score_matrix(rows, cols):
 
     return score_matrix, max_pos
 
-def getScore(x,y):
-    score = mismatch
-    if ((x=='A' and y=='U')or(x=='U' and y=='A')):
-        score = auScore;
-    elif ((x=='C' and y=='G')or(x=='G' and y=='C')):
-        score = cgScore;
-    elif ((x=='U' and y=='G')or(x=='G' and y=='U')):
-        score = ugScore;
-    return score
+def getRawScore(x,y):
+    global rawScoreMatrix
+    rawScoreMatrix = {'A':{'A':-3,'C':-3,'G':-3,'U':5}, 
+                      'C':{'A':-3,'C':-3,'G':5,'U':-3}, 
+                      'G':{'A':-3,'C':5,'G':-3,'U':2}, 
+                      'U':{'A':5,'C':-3,'G':2,'U':-3}
+                     }
+    return rawScoreMatrix[x][y]
 
 def calc_score(matrix, x, y):
     '''Calculate score for a given x, y position in the scoring matrix.
 
     The score is based on the up, left, and upper-left neighbors.
-    Here the score is hardcoded, it will be made into an array shortly
     '''
-    diag_score = matrix[x - 1][y - 1] + getScore(seq1[x-1],seq2[y-1])
+    diag_score = matrix[x - 1][y - 1] + getRawScore(seq1[x-1],seq2[y-1])
     up_score   = matrix[x - 1][y] + gap
     left_score = matrix[x][y - 1] + gap
 
@@ -202,6 +203,23 @@ def print_matrix(matrix):
             print('{0:>4}'.format(col),end="",flush=True)
         print()
 
+def makeStates():
+    states['in']={'emissions':{}}
+    states['mismatch']={'emissions':{}}
+    states['out']={'emissions':{}}
+    
+    global states
+    for i in rawScoreMatrix:
+        for j in rawScoreMatrix[i]:
+            if(j+i in states):
+                states[j+i]['emissions'][i+j]={}
+                states[j+i]['emissions'][i+j]['probability']={}
+            else:
+                if(rawScoreMatrix[i][j]==mismatch):
+                    states['mismatch']['emissions'][i+j]={}
+                    states['mismatch']['emissions'][i+j]['probability']={}
+                else:
+                    states[i+j]={'emissions':{i+j:{'probability':{}}}}
 
 if __name__ == '__main__':
     sys.exit(main())
