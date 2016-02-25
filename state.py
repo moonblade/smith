@@ -6,9 +6,9 @@ def initStates():
     # Creates the initial configurations of states
     # Loads all emissions into it
     states={}
-    states['in']={'emissions':{}}
-    states['mismatch']={'emissions':{}}
-    states['out']={'emissions':{}}
+    states['in']={'emissions':{},'transmissions':{}}
+    states['mismatch']={'emissions':{},'transmissions':{}}
+    states['out']={'emissions':{},'transmissions':{}}
     
     for i in globalVariables.rawScoreMatrix:
         states['mismatch']['emissions'][i+'-']={'probability':{}}
@@ -22,7 +22,7 @@ def initStates():
                     states['mismatch']['emissions'][i+j]={}
                     states['mismatch']['emissions'][i+j]['probability']={}
                 else:
-                    states[i+j]={'emissions':{i+j:{'probability':{}}}}
+                    states[i+j]={'emissions':{i+j:{'probability':{}}},'transmissions':{}}
 
     globalVariables.states = states
 
@@ -33,5 +33,59 @@ def getState(x,y):
             return i
     return "error"
 
-def initTransitionProbability():
+def initTransitionProbability(oneAligned,twoAligned):
+    oneRequired=oneAligned[::-1][globalVariables.reverseStartIndex:globalVariables.reverseEndIndex]
+    twoRequired=twoAligned[::-1][globalVariables.reverseStartIndex:globalVariables.reverseEndIndex]
+    # print(oneRequired)
+    # print(twoRequired)
+
+    # Count is set up via looping
+    # Count for in from first state
+    stateList=['in']
+    for a,b in zip(oneRequired,twoRequired):
+        stateList.append(getState(a,b))
+    stateList.append('out')
+
+    oldX=stateList[0]
+    for x in stateList[1:]:
+        if(x not in globalVariables.states[oldX]['transmissions']):
+            globalVariables.states[oldX]['transmissions'][x]={'count':0}
+        globalVariables.states[oldX]['transmissions'][x]['count']+=1
+        oldX=x
+
+    #loop through and get probability counts
+    for state in globalVariables.states:
+        for destinationState in globalVariables.states:
+            if('transmission' not in globalVariables.states[state]):
+                globalVariables.states[state]['transmission']={}
+            if(destinationState not in globalVariables.states[state]['transmission']):
+                globalVariables.states[state]['transmission'][destinationState]={'count':0}
+            probability = (transmissionCount(state,destinationState)+1)/(totalCount(state)+4)
+            globalVariables.states[state]['transmission'][destinationState]['probability']=probability
+
+def totalCount(state):
+    totalCount = 0
+    if('transmission' not in globalVariables.states[state]):
+        return 0
+
+    for destination in globalVariables.states[state]['transmission']:
+        totalCount+=transmissionCount(state,destination)
+    return totalCount
+
+def transmissionCount(state,destination):
+    if('transmission' not in globalVariables.states[state]):
+        return 0    
+    if(destination not in globalVariables.states[state]['transmission']):
+        return 0
+    return globalVariables.states[state]['transmission'][destination]['count']
+
+def getTransitionProbability(stateX,stateY):
+    #get probability from counts
+    # if('transmission' in globalVariables.states[state]):
+    #     for destination in globalVariables.states[state]['transmission']:
+    #         probability = (totalCount(state)+1)/(transmissionCount(destination)+4)
+    #         print(state+destination+probability)
+    # else:
+    #     if()
+    #     return 1/4
     pass

@@ -91,3 +91,19 @@ def nextMove(scoreMatrix, x, y):
     else:
         # Execution should not reach here.
         raise ValueError('invalid move during traceback')
+
+def printMatrix(matrix):
+    '''Print the scoring matrix.
+
+    ex:
+    0   0   0   0   0   0
+    0   2   1   2   1   2
+    0   1   1   1   1   1
+    0   0   3   2   3   2
+    0   2   2   5   4   5
+    0   1   4   4   7   6
+    '''
+    for row in matrix:
+        for col in row:
+            print('{0:>4}'.format(col),end="",flush=True)
+        print()
