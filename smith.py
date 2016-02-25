@@ -14,8 +14,8 @@ cgScore = 5
 ugScore = 2
 mismatch = -3
 gap      = -1
-seq1 = "UCGGA"
-seq2 = "GGCAU"
+seq1 = "GGCAU"
+seq2 = "UCGGA"
 
 
 def main():
@@ -49,6 +49,9 @@ def main():
         print('Sbjct  {0:<4}  {1}  {2:<4}'.format(i + 1, seq2_slice, i + len(seq2_slice)))
         print()
 
+    print(seq1_aligned)
+    print(seq2_aligned)
+
 
 def create_score_matrix(rows, cols):
     '''Create a matrix of scores representing trial alignments of the two sequences.
@@ -76,6 +79,15 @@ def create_score_matrix(rows, cols):
 
     return score_matrix, max_pos
 
+def getScore(x,y):
+    score = mismatch
+    if ((x=='A' and y=='U')or(x=='U' and y=='A')):
+        score = auScore;
+    elif ((x=='C' and y=='G')or(x=='G' and y=='C')):
+        score = cgScore;
+    elif ((x=='U' and y=='G')or(x=='G' and y=='U')):
+        score = ugScore;
+    return score
 
 def calc_score(matrix, x, y):
     '''Calculate score for a given x, y position in the scoring matrix.
@@ -83,17 +95,7 @@ def calc_score(matrix, x, y):
     The score is based on the up, left, and upper-left neighbors.
     Here the score is hardcoded, it will be made into an array shortly
     '''
-    similarity = 0
-    if ((seq1[x - 1]=='A' and seq2[y - 1]=='U')or(seq1[x - 1]=='U' and seq2[y - 1]=='A')):
-        similarity = auScore;
-    elif ((seq1[x - 1]=='C' and seq2[y - 1]=='G')or(seq1[x - 1]=='G' and seq2[y - 1]=='C')):
-        similarity = cgScore;
-    elif ((seq1[x - 1]=='U' and seq2[y - 1]=='G')or(seq1[x - 1]=='G' and seq2[y - 1]=='U')):
-        similarity = ugScore;
-    else:
-        similarity = mismatch
-
-    diag_score = matrix[x - 1][y - 1] + similarity
+    diag_score = matrix[x - 1][y - 1] + getScore(seq1[x-1],seq2[y-1])
     up_score   = matrix[x - 1][y] + gap
     left_score = matrix[x][y - 1] + gap
 
@@ -197,7 +199,7 @@ def print_matrix(matrix):
     '''
     for row in matrix:
         for col in row:
-            print('{0:>4}'.format(col))
+            print('{0:>4}'.format(col),end="",flush=True)
         print()
 
 
