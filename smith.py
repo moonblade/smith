@@ -19,7 +19,6 @@ seq2 = "UCGGA"
 
 reverseStartIndex=1
 reverseEndIndex=7
-states = {}
 
 def main():
     # The scoring matrix contains an extra row and column for the gap (-), hence
@@ -29,32 +28,16 @@ def main():
 
     # Initialize the scoring matrix.
     score_matrix, start_pos = create_score_matrix(rows, cols)
-    print_matrix(score_matrix)
 
     # Traceback. Find the optimal path through the scoring matrix. This path
     # corresponds to the optimal local sequence alignment.
     seq1_aligned, seq2_aligned = traceback(score_matrix, start_pos)
     assert len(seq1_aligned) == len(seq2_aligned), 'aligned strings are not the same size'
-
-    # Pretty print the results. The printing follows the format of BLAST results
-    # as closely as possible.
-    alignment_str, idents, gaps, mismatches = alignment_string(seq1_aligned, seq2_aligned)
-    alength = len(seq1_aligned)
-    print()
-    print(' Identities = {0}/{1} ({2:.1%}), Gaps = {3}/{4} ({5:.1%})'.format(idents,
-          alength, idents / alength, gaps, alength, gaps / alength))
-    print()
-    for i in range(0, alength, 60):
-        seq1_slice = seq1_aligned[i:i+60]
-        print('Query  {0:<4}  {1}  {2:<4}'.format(i + 1, seq1_slice, i + len(seq1_slice)))
-        print('             {0}'.format(alignment_str[i:i+60]))
-        seq2_slice = seq2_aligned[i:i+60]
-        print('Sbjct  {0:<4}  {1}  {2:<4}'.format(i + 1, seq2_slice, i + len(seq2_slice)))
-        print()
+    print(seq1_aligned)
+    print(seq2_aligned)
 
     makeStates()
-
-
+    print(states)
 
 def create_score_matrix(rows, cols):
     '''Create a matrix of scores representing trial alignments of the two sequences.
@@ -204,12 +187,16 @@ def print_matrix(matrix):
         print()
 
 def makeStates():
+    global states
+    states={}
     states['in']={'emissions':{}}
     states['mismatch']={'emissions':{}}
+    states['gap']={'emissions':{}}
     states['out']={'emissions':{}}
     
-    global states
     for i in rawScoreMatrix:
+        states['gap']['emissions'][i+'-']={}
+        states['gap']['emissions']['-'+i]={}
         for j in rawScoreMatrix[i]:
             if(j+i in states):
                 states[j+i]['emissions'][i+j]={}
@@ -220,6 +207,9 @@ def makeStates():
                     states['mismatch']['emissions'][i+j]['probability']={}
                 else:
                     states[i+j]={'emissions':{i+j:{'probability':{}}}}
+
+def getState(x,y):
+    pass
 
 if __name__ == '__main__':
     sys.exit(main())
