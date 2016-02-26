@@ -8,3 +8,4 @@ seq2 = ["GGCAU","AUCGAUC","GUACGUAC","GGCAU"]
 states={}
 reverseStartIndex=1
 reverseEndIndex=7
+csvFile = "data.csv"

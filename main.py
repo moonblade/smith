@@ -7,14 +7,17 @@ import state
 import score
 import globalVariables
 import pprint
+import csv
 
 def main():
     # for later looping
-    for seq1,seq2 in zip(globalVariables.seq1,globalVariables.seq2):
-        doStuff(seq1,seq2)
+    with open(globalVariables.csvFile, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            doStuff(row['seq1'],row['seq2'])
     pp = pprint.PrettyPrinter(depth=6)
     pp.pprint(globalVariables.states)
-    # print(globalVariables.states)
+    print(globalVariables.states)
 
 
 def doStuff(seq1,seq2):
