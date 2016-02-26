@@ -1,8 +1,7 @@
 #Module for score related stuff
 import globalVariables
+import csv
 def initScoreMatrix(seq1, seq2):
-    globalVariables.rawScoreMatrix = {'A':{'A':-3,'C':-3,'G':-3,'U':5},'C':{'A':-3,'C':-3,'G':5,'U':-3},'G':{'A':-3,'C':5,'G':-3,'U':2},'U':{'A':5,'C':-3,'G':2,'U':-3}}
-
     rows = len(seq1) + 1
     cols = len(seq2) + 1
 
@@ -23,6 +22,19 @@ def initScoreMatrix(seq1, seq2):
     assert maxPos is not None, 'the x, y position with the highest score was not found'
 
     return scoreMatrix, maxPos
+
+def initRawScoreMatrix():
+    with open(globalVariables.scoreMatrix, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        chars = reader.fieldnames
+        globalVariables.rawScoreMatrix={}  
+        for row in reader:
+            char=row[chars[0]]
+            row.pop(chars[0])
+            globalVariables.rawScoreMatrix[char]=row
+    for sub in globalVariables.rawScoreMatrix:
+        for key in globalVariables.rawScoreMatrix[sub]:
+            globalVariables.rawScoreMatrix[sub][key] = int(globalVariables.rawScoreMatrix[sub][key])
 
 def calculateScore(matrix, x, y,seq1,seq2):
     '''Calculate score for a given x, y position in the scoring matrix.

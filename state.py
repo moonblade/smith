@@ -126,3 +126,10 @@ def getEmissionProbability(state,emission):
     else:
         return getEmissionCount(state,emission)/getTotalEmissionCount(state)
 
+def initTimedStates(state):
+    timedStates=[]
+    timedStates.append(state['in'])
+    for x in range(1):
+    # for x in range(globalVariables.reverseEndIndex-globalVariables.reverseStartIndex):
+        pass
+    return timedStates    

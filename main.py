@@ -11,13 +11,16 @@ import csv
 
 def main():
     # for later looping
+    score.initRawScoreMatrix()
     with open(globalVariables.csvFile, 'r') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             doStuff(row['seq1'],row['seq2'])
+    globalVariables.timedStates=state.initTimedStates(globalVariables.states)
+
     pp = pprint.PrettyPrinter(depth=6)
-    pp.pprint(globalVariables.states)
-    print(globalVariables.states)
+    # pp.pprint(globalVariables.states)
+    # pp.pprint(globalVariables.timedStates)
 
 
 def doStuff(seq1,seq2):
@@ -26,8 +29,8 @@ def doStuff(seq1,seq2):
     oneAligned, twoAligned = score.traceback(scoreMatrix, startPos, seq1,seq2)
 
     assert len(oneAligned) == len(twoAligned), 'aligned strings are not the same size'
-    print(oneAligned)
-    print(twoAligned)
+    # print(oneAligned)
+    # print(twoAligned)
 
     state.initStates()
     state.initProbabilities(oneAligned,twoAligned)
