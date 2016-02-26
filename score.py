@@ -3,8 +3,8 @@ import globalVariables
 def initScoreMatrix(seq1, seq2):
     globalVariables.rawScoreMatrix = {'A':{'A':-3,'C':-3,'G':-3,'U':5},'C':{'A':-3,'C':-3,'G':5,'U':-3},'G':{'A':-3,'C':5,'G':-3,'U':2},'U':{'A':5,'C':-3,'G':2,'U':-3}}
 
-    rows = len(globalVariables.seq1) + 1
-    cols = len(globalVariables.seq2) + 1
+    rows = len(seq1) + 1
+    cols = len(seq2) + 1
 
     scoreMatrix = [[0 for col in range(cols)] for row in range(rows)]
 
@@ -13,7 +13,7 @@ def initScoreMatrix(seq1, seq2):
     maxPos   = None    # The row and columbn of the highest score in matrix.
     for i in range(1, rows):
         for j in range(1, cols):
-            score = calculateScore(scoreMatrix, i, j)
+            score = calculateScore(scoreMatrix, i, j,seq1,seq2)
             if score > maxScore:
                 maxScore = score
                 maxPos   = (i, j)
@@ -24,18 +24,18 @@ def initScoreMatrix(seq1, seq2):
 
     return scoreMatrix, maxPos
 
-def calculateScore(matrix, x, y):
+def calculateScore(matrix, x, y,seq1,seq2):
     '''Calculate score for a given x, y position in the scoring matrix.
 
     The score is based on the up, left, and upper-left neighbors.
     '''
-    diagonalScore = matrix[x - 1][y - 1] + globalVariables.rawScoreMatrix[globalVariables.seq1[x-1]][globalVariables.seq2[y-1]]
+    diagonalScore = matrix[x - 1][y - 1] + globalVariables.rawScoreMatrix[seq1[x-1]][seq2[y-1]]
     upScore   = matrix[x - 1][y] + globalVariables.gap
     leftScore = matrix[x][y - 1] + globalVariables.gap
 
     return max(0, diagonalScore, upScore, leftScore)
 
-def traceback(scoreMatrix, startPosition):
+def traceback(scoreMatrix, startPosition, seq1,seq2):
     '''Find the optimal path through the matrix.
 
     This function traces a path from the bottom-right to the top-left corner of
@@ -57,23 +57,23 @@ def traceback(scoreMatrix, startPosition):
     move         = nextMove(scoreMatrix, x, y)
     while move != END:
         if move == DIAG:
-            alignedSequenceOne.append(globalVariables.seq1[x - 1])
-            alignedSequenceTwo.append(globalVariables.seq2[y - 1])
+            alignedSequenceOne.append(seq1[x - 1])
+            alignedSequenceTwo.append(seq2[y - 1])
             x -= 1
             y -= 1
         elif move == UP:
-            alignedSequenceOne.append(globalVariables.seq1[x - 1])
+            alignedSequenceOne.append(seq1[x - 1])
             alignedSequenceTwo.append('-')
             x -= 1
         else:
             alignedSequenceOne.append('-')
-            alignedSequenceTwo.append(globalVariables.seq2[y - 1])
+            alignedSequenceTwo.append(seq2[y - 1])
             y -= 1
 
         move = nextMove(scoreMatrix, x, y)
 
-    alignedSequenceOne.append(globalVariables.seq1[x - 1])
-    alignedSequenceTwo.append(globalVariables.seq1[y - 1])
+    alignedSequenceOne.append(seq1[x - 1])
+    alignedSequenceTwo.append(seq1[y - 1])
 
     return ''.join(reversed(alignedSequenceOne)), ''.join(reversed(alignedSequenceTwo))
 

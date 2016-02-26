@@ -3,8 +3,8 @@ cgScore = 5
 ugScore = 2
 mismatch = -3
 gap      = -1
-seq1 = "GGCAU"
-seq2 = "UCGGA"
-
+seq1 = ["GGCAU","GUAUCCU","AUCGAUGC","GGCAU"]
+seq2 = ["GGCAU","AUCGAUC","GUACGUAC","GGCAU"]
+states={}
 reverseStartIndex=1
 reverseEndIndex=7

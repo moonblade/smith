@@ -5,10 +5,13 @@ import globalVariables
 def initStates():
     # Creates the initial configurations of states
     # Loads all emissions into it
-    states={}
-    states['in']={'emissions':{},'transitions':{}}
-    states['mismatch']={'emissions':{},'transitions':{}}
-    states['out']={'emissions':{},'transitions':{}}
+    states= globalVariables.states
+    if('in' not in states):
+        states['in']={'emissions':{},'transitions':{}}
+    if('mismatch' not in states):
+        states['mismatch']={'emissions':{},'transitions':{}}
+    if('out' not in states):
+        states['out']={'emissions':{},'transitions':{}}
 
     for i in globalVariables.rawScoreMatrix:
         if(i+'-' not in states['mismatch']['emissions']):
@@ -30,7 +33,6 @@ def initStates():
                 else:
                     if(i+j not in states):
                         states[i+j]={'emissions':{i+j:{'count':0}},'transitions':{}}
-    globalVariables.states = states
 
 def getState(x,y):
     # Given an emission x,y finds which state it belongs to
