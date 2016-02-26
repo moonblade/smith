@@ -18,12 +18,13 @@ def doStuff():
     oneAligned, twoAligned = score.traceback(scoreMatrix, startPos)
 
     assert len(oneAligned) == len(twoAligned), 'aligned strings are not the same size'
-    # print(oneAligned)
-    # print(twoAligned)
+    print(oneAligned)
+    print(twoAligned)
 
 
     state.initStates()
-    state.initTransitionProbability(oneAligned,twoAligned)
+    state.initProbabilities(oneAligned,twoAligned)
+
     pp = pprint.PrettyPrinter(depth=6)
     pp.pprint(globalVariables.states)
     # print(globalVariables.states)
