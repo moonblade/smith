@@ -8,17 +8,24 @@ def initStates():
     states= globalVariables.states
     if('in' not in states):
         states['in']={'emissions':{},'transitions':{}}
+        globalVariables.stateList.add('in')
     if('mismatch' not in states):
         states['mismatch']={'emissions':{},'transitions':{}}
+        globalVariables.stateList.add('mismatch')
     if('out' not in states):
         states['out']={'emissions':{},'transitions':{}}
+        globalVariables.stateList.add('out')
 
     for i in globalVariables.rawScoreMatrix:
+        globalVariables.emissionList.add(i+'-')
+        globalVariables.emissionList.add('-'+i)
         if(i+'-' not in states['mismatch']['emissions']):
             states['mismatch']['emissions'][i+'-']={'count':0}
         if('-'+i not in states['mismatch']['emissions']):
             states['mismatch']['emissions']['-'+i]={'count':0}
         for j in globalVariables.rawScoreMatrix[i]:
+            globalVariables.emissionList.add(j+i)
+            globalVariables.emissionList.add(i+j)
             if(j+i in states):
                 if(i+j not in states[j+i]['emissions']):
                     states[j+i]['emissions'][i+j]={}
@@ -33,6 +40,7 @@ def initStates():
                 else:
                     if(i+j not in states):
                         states[i+j]={'emissions':{i+j:{'count':0}},'transitions':{}}
+                        globalVariables.stateList.add(i+j)
 
 def getState(x,y):
     # Given an emission x,y finds which state it belongs to
@@ -125,11 +133,3 @@ def getEmissionProbability(state,emission):
         return 0
     else:
         return getEmissionCount(state,emission)/getTotalEmissionCount(state)
-
-def initTimedStates(state):
-    timedStates=[]
-    timedStates.append(state['in'])
-    for x in range(1):
-    # for x in range(globalVariables.reverseEndIndex-globalVariables.reverseStartIndex):
-        pass
-    return timedStates    
