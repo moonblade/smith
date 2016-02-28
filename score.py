@@ -1,6 +1,7 @@
 #Module for score related stuff
 import globalVariables
 import csv
+from state import getState
 def initScoreMatrix(seq1, seq2):
     rows = len(seq1) + 1
     cols = len(seq2) + 1
@@ -103,6 +104,24 @@ def nextMove(scoreMatrix, x, y):
     else:
         # Execution should not reach here.
         raise ValueError('invalid move during traceback')
+
+def alignment_string(aligned_seq1, aligned_seq2):
+    # Build the string as a list of characters to avoid costly string
+    # concatenation.
+    idents, gaps, mismatches = 0, 0, 0
+    alignment_string = []
+    for base1, base2 in zip(aligned_seq1, aligned_seq2):
+        if (getState(base1,base2)=='mismatch'):
+            alignment_string.append(' ')
+            gaps += 1
+        elif (base1+base2=='CG' or base1+base2=='GC'):
+            alignment_string.append(':')
+            idents += 1
+        else:
+            alignment_string.append('|')
+            mismatches += 1
+
+    return ''.join(alignment_string)
 
 def printMatrix(matrix):
     '''Print the scoring matrix.
