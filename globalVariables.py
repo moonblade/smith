@@ -9,4 +9,8 @@ reverseStartIndex=1
 reverseEndIndex=7
 csvFile = "data.csv"
 inputcsv = "input.csv"
-# csvFile = "training_set.csv"
+# csvFile = "training_csv"
+
+scoreMatrixFile="scorePickle"
+statesFile="statesPickle"
+timedStatesFile="timedStatesPickle"
