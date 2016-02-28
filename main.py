@@ -33,8 +33,22 @@ def main():
     
     pp = pprint.PrettyPrinter(depth=6)
     # pp.pprint(globalVariables.states)
-    pp.pprint(globalVariables.timedStates)
-
+    # pp.pprint(globalVariables.timedStates[6])
+    count=1
+    with open(globalVariables.inputcsv, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        names=reader.fieldnames
+        for row in reader:
+            # Assuming that the sequences will be in the first two rows
+            # Compute probabilities with sequence 1 and reverse of sequence 2
+            seq1=row[names[0]]
+            seq2=row[names[1]]
+            scoreMatrix, startPos = score.initScoreMatrix(seq1,seq2)
+            alinedOne, alinedTwo = score.traceback(scoreMatrix, startPos, seq1,seq2)
+            place=globalVariables.reverseEndIndex-globalVariables.reverseStartIndex-1
+            stateNeeded=state.getState(alinedOne[::-1][place],alinedTwo[::-1][place])
+            print(str(count)+","+str(globalVariables.timedStates[place][stateNeeded]['probability']))
+            count+=1
 
 def doStuff(seq1,seq2):
     # Initialize the scoring matrix.
@@ -42,8 +56,8 @@ def doStuff(seq1,seq2):
     oneAligned, twoAligned = score.traceback(scoreMatrix, startPos, seq1,seq2)
 
     assert len(oneAligned) == len(twoAligned), 'aligned strings are not the same size'
-    # print(oneAligned)
-    # print(twoAligned)
+    print(oneAligned)
+    print(twoAligned)
 
     state.initStates()
     state.initProbabilities(oneAligned,twoAligned)

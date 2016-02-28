@@ -109,11 +109,11 @@ def transitionCount(state,destination):
     return globalVariables.states[state]['transitions'][destination]['count']
 
 def getTransitionProbability(state,destinationState):
-    # return (transitionCount(state,destinationState)+1)/(totalTransitionCount(state)+4)
     # Instead of 0.25 for null, returning zero currently
     if(totalTransitionCount(state)==0):
         return 0
-    return (transitionCount(state,destinationState)/totalTransitionCount(state))
+    return (transitionCount(state,destinationState)+1)/(totalTransitionCount(state)+4)
+    # return (transitionCount(state,destinationState)/totalTransitionCount(state))
 
 def getTotalEmissionCount(state):
     totalEmissionCount=0

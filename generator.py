@@ -4,8 +4,8 @@ import random
 
 permissibleCharacters=['A','U','G','C']
 numberOfDataEntries=int(sys.argv[1])
-minLength=5
-maxLength=50
+minLength=20
+maxLength=100
 file=open('data.csv','w')
 file.write('seq1,seq2'+"\n")
 for x in range(numberOfDataEntries):
