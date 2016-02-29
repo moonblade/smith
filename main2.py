@@ -12,6 +12,11 @@ import csv
 import upper
 import pickle
 
+# Convert to UpperCase
+upper.toUpper(globalVariables.inputcsv)
+# Replace T with U
+os.system('sed -i s/T/U/g '+globalVariables.inputcsv)
+
 def main():
     count=1
     outputList=[]
@@ -19,6 +24,9 @@ def main():
     globalVariables.rawScoreMatrix = pickle.load(open(globalVariables.scoreMatrixFile,"rb"))
     globalVariables.states = pickle.load(open(globalVariables.statesFile,"rb"))
     globalVariables.timedStates = pickle.load(open(globalVariables.timedStatesFile,"rb"))
+    # print(globalVariables.rawScoreMatrix)
+    # print(globalVariables.states)
+    # print(globalVariables.timedStates)
     with open(globalVariables.inputcsv, 'r') as csvfile:
         reader = csv.DictReader(csvfile)
         names=reader.fieldnames
